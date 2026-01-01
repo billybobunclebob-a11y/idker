@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Optimus Chat</title>
+    <style>
+        body {
+            background: #111;
+            color: #eee;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #chatbox {
+            width: 100%;
+            height: 400px;
+            background: #222;
+            padding: 10px;
+            overflow-y: auto;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .msg {
+            margin: 10px 0;
+        }
+        .user {
+            color: #4da6ff;
+        }
+        .bot {
+            color: #7dff7d;
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background: #4da6ff;
+            color: black;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Optimus Chat</h1>
+
+<div id="chatbox"></div>
+
+<input id="message" placeholder="Type your message...">
+<button onclick="sendMessage()">Send</button>
+
+<script>
+async function sendMessage() {
+    const msg = document.getElementById("message").value;
+    if (!msg) return;
+
+    const chatbox = document.getElementById("chatbox");
+    chatbox.innerHTML += `<div class='msg user'><b>You:</b> ${msg}</div>`;
+    document.getElementById("message").value = "";
+
+    const response = await fetch("/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({message: msg})
+    });
+
+    const data = await response.json();
+    const reply = data.reply;
+
+    chatbox.innerHTML += `<div class='msg bot'><b>Optimus:</b> ${reply}</div>`;
+    chatbox.scrollTop = chatbox.scrollHeight;
+}
+</script>
+
+</body>
+</html>
